@@ -20,22 +20,34 @@ app.get('/', (req, res) => {
 
 const wss = new WebSocketServer({ server });
 
+let client_phone;
+let client_computer;
+
+
 // WebSocket 연결 이벤트 처리
 wss.on('connection', (ws) => {
-  console.log('Client connected');
-
+  let user = ws;
   // 클라이언트로부터 메시지를 받았을 때 실행되는 함수
   ws.on('message', (data) => {
     try {
       // 자이로스코프 데이터는 JSON 문자열로 전송되므로, 이를 파싱
       const parsedData = JSON.parse(data);
+
+      if (parsedData.event === 'type_phone') {
+        client_phone = user;
+      }
+
+      if (parsedData.event === 'type_computer') {
+        client_computer = user;
+      }
       
       if (parsedData.event === 'gyroscope_data') {
         console.log(`Received gyroscope data: x=${parsedData.x}, y=${parsedData.y}, z=${parsedData.z}`);
-        // ws.send('메시지를 잘 받았습니다!');
-      } else {
-        console.log(`Unknown event: ${parsedData.event}`);
-      }
+        if (client_computer) {
+          client_computer.send(data);
+        }
+      } 
+      
     } catch (err) {
       console.log('Error parsing message:', err);
     }
