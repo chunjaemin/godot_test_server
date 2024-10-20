@@ -32,7 +32,7 @@ wss.on('connection', (ws) => {
       
       if (parsedData.event === 'gyroscope_data') {
         console.log(`Received gyroscope data: x=${parsedData.x}, y=${parsedData.y}, z=${parsedData.z}`);
-        ws.send('메시지를 잘 받았습니다!');
+        // ws.send('메시지를 잘 받았습니다!');
       } else {
         console.log(`Unknown event: ${parsedData.event}`);
       }
